@@ -14,7 +14,6 @@ typedef struct student {
 
 student *reallocate_stu_list(student * stu_list, long entries)
 {
-	printf("Inside realloc func");
 	student *tmp = realloc(stu_list, 2 * (entries * sizeof(student)));
 	if (!tmp) {
 		printf("Error allocating %ld elements for stu_list\n", entries);
@@ -118,6 +117,7 @@ student *get_user_input(student * stu_list, long *entries)
 			break;
 		}
 		++*entries;
+                stu_list = reallocate_stu_list(stu_list, *entries);
 		stu_list = create_student(stu_list, i, user_input);
 		++i;
 	};
@@ -134,13 +134,17 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if (argc == 2) {
+        if (argc == 1) {
+                printf("Names must be entered at the command line.\n\n");
+                stu_list = get_user_input(stu_list, &entries);
+	} else if (argc == 2) {
 		file = argv[1];
 		FILE *fp = fopen(file, "r");
 		if (!fp) {
-			printf
-			    ("Invalid file. Names must be entered at the command line.\n");
-			stu_list = get_user_input(stu_list, &entries);
+                        printf("Unable to open file `%s`\n", file);
+			// printf
+			//     ("Invalid file. Names must be entered at the command line.\n");
+			// stu_list = get_user_input(stu_list, &entries);
 		} else {
 			entries = get_num_entries(file, fp);
 			printf("Entries are %ld\n", entries);
