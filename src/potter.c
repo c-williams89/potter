@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -23,7 +24,7 @@ student *reallocate_stu_list(student * stu_list, long entries)
 	return stu_list;
 }
 
-long get_num_entries(const char file[], FILE * fp)
+long get_num_entries(FILE * fp)
 {
 	long entries = 0;
 	char *curr_line;
@@ -106,7 +107,7 @@ int grade_and_print(student * stu_list, long entries, int i,
 
 student *get_user_input(student * stu_list, long *entries)
 {
-	char *user_input;
+	char *user_input = '\0';
 	long i = 0;
 	while (true) {
 		printf
@@ -146,7 +147,7 @@ int main(int argc, char *argv[])
 			//     ("Invalid file. Names must be entered at the command line.\n");
 			// stu_list = get_user_input(stu_list, &entries);
 		} else {
-			entries = get_num_entries(file, fp);
+			entries = get_num_entries(fp);
 			printf("Entries are %ld\n", entries);
 			FILE *fp = fopen(file, "r");
 			stu_list = reallocate_stu_list(stu_list, entries);

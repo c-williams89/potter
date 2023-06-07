@@ -3,8 +3,8 @@
 CC := gcc-9
 
 # compile flags
-CFLAGS += -Wall -Wextra -Wpedantic -Wwrite-strings -Wstack-usage=1024
-CFLAGS += -Wfloat-equal -Waggregate-return -Winline
+CFLAGS += -std=c18 -Wall -Wextra -Wpedantic -Waggregate-return -Wwrite-strings
+CFLAGS += -Wvla -Wfloat-equal
 
 SRC_DIR := src
 OBJ_DIR := obj
@@ -15,7 +15,7 @@ SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # executable
-BIN := ticker
+BIN := potter
 
 all: $(BIN)
 
@@ -27,7 +27,6 @@ debug: $(BIN)
 
 clean: 
 	@rm -rf $(BIN) $(OBJ_DIR)
-	@rm $(DATA_DIR)/search_results
 
 # creates object files from .c files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

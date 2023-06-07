@@ -1,2 +1,8 @@
 # ignore indent results
 *.c~
+
+# ignore vscode settings
+.vscode/
+
+# ignore executable
+src/potter
