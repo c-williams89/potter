@@ -82,9 +82,22 @@ int grade_and_print(student *stu_list, long entries, int i, bool ready_to_print)
         return num_failed;
 }
 
-int main (void) {
-        long entries = get_num_entries(INPUT_FILE);
+void get_user_input() {
 
+}
+
+int main (int argc, char *argv[]) {
+        const char *file;
+        long entries = 0;
+        if (argc == 2) {
+                file = argv[1];
+                FILE *fp = fopen(file, "r");
+                if (!fp) {
+                        printf("Invalid file. Names must be entered at the command line.\n");
+                        // get_user_input();
+                }
+                entries = get_num_entries(file);
+        }
         struct student *stu_list = malloc(entries * sizeof(student));
         if (!stu_list) {
                 printf("Error allocating %ld elements for stu_list\n", entries);
@@ -93,8 +106,7 @@ int main (void) {
 
         char *curr_line;
         size_t len = 0;
-        FILE *fp = fopen(INPUT_FILE, "r");
-
+        FILE *fp = fopen(file, "r");
         if (!fp) {
                 perror("Could not open file: Pottery.txt\n");
         }
@@ -104,8 +116,10 @@ int main (void) {
                 create_student(stu_list, i, curr_line);
         }
         fclose(fp);
+
         bool ready_to_print = false;
         int max_failed = 0, num_failed = 0, max_failed_index = 0;
+        
         for (int i = 0; i < entries; ++i) {
                 num_failed = grade_and_print(stu_list, entries, i, ready_to_print);
                 if (num_failed > max_failed) {
