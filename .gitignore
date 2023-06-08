@@ -6,3 +6,6 @@
 
 # ignore executable
 src/potter
+
+# ignore scratch
+scratch.c
