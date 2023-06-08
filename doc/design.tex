@@ -1,0 +1,136 @@
+\hypertarget{pottery-design-plan}{%
+\section{pottery Design Plan}\label{pottery-design-plan}}
+
+\hypertarget{wo1-clayton-e.-williams}{%
+\section{WO1 Clayton E. Williams}\label{wo1-clayton-e.-williams}}
+
+\hypertarget{june-2023}{%
+\section{June 2023}\label{june-2023}}
+
+\hypertarget{project-structure}{%
+\subsection{Project Structure}\label{project-structure}}
+
+In the attempt to begin to build SOPs for future projects, the project
+will be broken down as such:
+
+\begin{verbatim}
+.
+├── data
+│   └── Pottery.txt
+├── doc
+│   ├── design.md
+│   ├── potter.1
+│   ├── pottery.pdf
+│   ├── writeup.adoc
+│   └── writeup.pdf
+├── include
+├── Makefile
+├── README.md
+├── scratch.c
+├── src
+│   └── potter.c
+└── test
+\end{verbatim}
+
+\texttt{data} - external files that are read as input to the program
+\texttt{doc} - documentation for the project, such as design plan, man
+page, writeup, and test plan \texttt{include} - custom header files for
+various C source code files \texttt{src} - C source code files for the
+project \texttt{test} - C source code files for unit testing
+
+\hypertarget{objects-needed}{%
+\subsection{Objects Needed}\label{objects-needed}}
+
+The best data structure to use will be of a struct that includes the
+size, capacity, array of student names, and array of student times to
+finish the project:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{typedef} \KeywordTok{struct}\NormalTok{ student }\OperatorTok{\{}
+    \DataTypeTok{int}\NormalTok{ size}\OperatorTok{;}
+    \DataTypeTok{int}\NormalTok{ capacity}\OperatorTok{;}
+    \DataTypeTok{char} \OperatorTok{**}\NormalTok{stu\_name}\OperatorTok{;}
+    \DataTypeTok{int} \OperatorTok{*}\NormalTok{stu\_time}\OperatorTok{;}
+\OperatorTok{\}}\NormalTok{ student}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+This provides the ability to pass the struct pointer to various
+functions and easily maintain its current size and determine when it
+needs to be resized.
+
+\hypertarget{functions-needed}{%
+\subsection{Functions Needed}\label{functions-needed}}
+
+The basic functions needed will be:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{get\_file\_size}\OperatorTok{();}
+\NormalTok{clean}\OperatorTok{();}
+\NormalTok{create\_struct}\OperatorTok{();}
+\NormalTok{reallocate\_struct}\OperatorTok{();}
+\NormalTok{get\_user\_input}\OperatorTok{();}
+\NormalTok{create\_student}\OperatorTok{();}
+\NormalTok{grade\_students}\OperatorTok{();}
+\NormalTok{print\_students}\OperatorTok{();}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{get\_file\_size} - Identifies number of lines in the data file
+to allocate arrays to exact length. \texttt{clean} - run at the end of
+program or at exit to free allocated memory. \texttt{create\_struct} -
+initializes struct. \texttt{reallocate\_struct} - resize struct.
+\texttt{get\_user\_input} - take user input from command line for manual
+student entry. \texttt{create\_student} - adds student name and time to
+the respective arrays. \texttt{grade\_students} - iterate over students
+to identify optimal index to begin grading. \texttt{print\_students} -
+print the students who failed based on index returned from
+\texttt{grade\_students}.
+
+\hypertarget{project-flow}{%
+\subsection{Project Flow}\label{project-flow}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Define struct and write function prototypes
+\item
+  Define main as \texttt{int\ main\ (int\ argc,\ char*\ argv{[}{]})} and
+  use argc to determine if a file name was passed to the command line.
+\item
+  If a file name is provided, attempt to open (exit if error). Invoke
+  \texttt{get\_file\_size()} to determine number of lines in the
+  program, to malloc student member variables of that size.
+\item
+  If no file name is provided, invoke \texttt{get\_user\_input()} that
+  will take user input, line by line.
+\item
+  Whether student data is read line by line from command line or
+  provided file name, they are both treated as char pointers taht are
+  passed to \texttt{create\_student()}.
+\item
+  \texttt{create\_student()} will have logic to call
+  \texttt{reallocate\_struct()} to increase the size of the struct
+  arrays based on number of students entered from command line.
+  \texttt{create\_students()} will parse the string and subsequently add
+  to the struct.
+\item
+  When the file or user input is exhausted, the struct is fd to
+  \texttt{grade\_students()}. The general logical flow is to iterate
+  over from 0 to size, and determine if a students time is \textgreater=
+  size * 5. After that, the loop needs to run from 1 to size, and 0 to
+  1, and so on. Each call of the loop will increment a counter of
+  students failed if conditional is met and compare to subsequent loops
+  to find the iteration with the most failed students and save that
+  index.
+\item
+  After grading is complete, the index with most failed is passed to
+  \texttt{print\_students()} that will iterate in a similar manner, this
+  time, printing the students who failed.
+\item
+  After this is complete, invoke the \texttt{clean()} function to free
+  all allocated heap memory.
+\end{enumerate}
