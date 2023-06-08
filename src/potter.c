@@ -111,7 +111,9 @@ void create_student(student * stu_list, char *curr_input)
 	char *space_loc = strrchr(curr_input, ' ');
 	space_loc++;
 	int time_to_finsh = strtol(space_loc, &ptr, 10);
-	if ((strncmp(space_loc, ptr, strlen(space_loc)) == 0) || (ptr)) {
+
+	if ((strncmp(space_loc, ptr, strlen(space_loc)) == 0)
+	    || strlen(ptr) > 1) {
 		printf
 		    ("Invalid format for student information. Please try again.\n");
 		return;
@@ -139,7 +141,7 @@ student *get_user_input(student * stu_list)
 		char user_input[MAX_INPUT_SIZE];
 		printf
 		    ("Please enter a student and their time to finish the project using the 'name time' format. Press 'Q' to quit. ==> ");
-		fgets(user_input, 20, stdin);
+		fgets(user_input, MAX_INPUT_SIZE, stdin);
 		__fpurge(stdin);
 		if (strncmp(user_input, "Q", strlen(user_input) - 1) == 0) {
 			system("clear");
