@@ -61,7 +61,6 @@ student *create_struct()
 	stu_list->stu_time = calloc(stu_list->capacity, sizeof(int));
 	if (!stu_list->stu_time) {
 		printf("Error allocating stu_time array of size 1\n");
-		// clean();
 		exit(1);
 	}
 	return stu_list;
@@ -69,8 +68,6 @@ student *create_struct()
 
 void reallocate_stu_list(student * stu_list, int new_size, bool from_user)
 {
-	printf("Reallocating array.\n");
-
 	int next_size = stu_list->capacity * 2;
 	if (from_user) {
 		char **tmp_name =
@@ -113,20 +110,27 @@ void create_student(student * stu_list, char *curr_input)
 	char *ptr;
 	char *space_loc = strrchr(curr_input, ' ');
 	space_loc++;
-	stu_list->stu_time[stu_list->size] = strtol(space_loc, &ptr, 10);
-
+	int time_to_finsh = strtol(space_loc, &ptr, 10);
+	if (strncmp(space_loc, ptr, strlen(space_loc)) == 0) {
+		printf
+		    ("Invalid format for student information. Please try again.\n");
+		return;
+	}
+	stu_list->stu_time[stu_list->size] = time_to_finsh;
 	/*
 	   Use strcspn to find bytes before digit. Use that value to copy that 
 	   number of bytes to stu_name.
 	 */
 	int name_size = strcspn(curr_input, delim);
-	stu_list->stu_name[stu_list->size] = calloc(name_size + 1, sizeof(char));
+	stu_list->stu_name[stu_list->size] =
+	    calloc(name_size + 1, sizeof(char));
 	if (!stu_list->stu_name[stu_list->size]) {
 		printf("Error allocating %d bytes for student name.\n",
 		       name_size);
 		exit(1);
 	}
 	strncpy(stu_list->stu_name[stu_list->size], curr_input, name_size);
+	stu_list->size++;
 }
 
 student *get_user_input(student * stu_list)
@@ -134,17 +138,17 @@ student *get_user_input(student * stu_list)
 	while (true) {
 		char user_input[MAX_INPUT_SIZE];
 		printf
-		    ("Please enter a student and their time to finish the project. Press 'Q' to quit. ==> ");
+		    ("Please enter a student and their time to finish the project using the 'name time' format. Press 'Q' to quit. ==> ");
 		fgets(user_input, 20, stdin);
 		__fpurge(stdin);
 		if (strncmp(user_input, "Q", strlen(user_input) - 1) == 0) {
+			system("clear");
 			break;
 		}
 		if (stu_list->size == stu_list->capacity) {
 			reallocate_stu_list(stu_list, stu_list->size, true);
 		}
 		create_student(stu_list, user_input);
-		stu_list->size++;
 	}
 	return stu_list;
 }
@@ -206,7 +210,6 @@ int main(int argc, char *argv[])
 		for (int i = 0; i < entries; ++i) {
 			getline(&curr_entry, &len, fp);
 			create_student(stu_list, curr_entry);
-			stu_list->size++;
 		}
 		free(curr_entry);
 		fclose(fp);
@@ -228,5 +231,4 @@ int main(int argc, char *argv[])
 	grade_and_print(stu_list, stu_list->size, max_failed_idx,
 			ready_to_print);
 	clean(stu_list);
-
 }
