@@ -21,6 +21,7 @@ student *reallocate_stu_list(student * stu_list, long entries)
 		exit(1);
 	}
 	stu_list = tmp;
+        free(tmp);
 	return stu_list;
 }
 
@@ -125,11 +126,18 @@ student *get_user_input(student * stu_list, long *entries)
 	return stu_list;
 }
 
+void clean (student *stu_list, long entries) {
+        for (int i = 0; i < entries; ++i) {
+                free(stu_list[i].stu_name);
+        }
+        free(stu_list);
+}
+
 int main(int argc, char *argv[])
 {
 	const char *file;
 	long entries = 0;
-	struct student *stu_list = malloc(sizeof(*stu_list));
+	student *stu_list = malloc(sizeof(*stu_list));
 	if (!stu_list) {
 		printf("Error allocating stu_list\n");
 		exit(1);
@@ -177,4 +185,6 @@ int main(int argc, char *argv[])
 	}
 	ready_to_print = true;
 	grade_and_print(stu_list, entries, max_failed_index, ready_to_print);
+
+        clean(stu_list, entries);
 }
