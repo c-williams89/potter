@@ -12,3 +12,6 @@ scratch.c
 
 # ignore adocs
 *.adoc
+
+# ignore design md
+doc/design.md
