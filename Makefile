@@ -6,6 +6,8 @@ CC := gcc-9
 CFLAGS += -std=c18 -Wall -Wextra -Wpedantic -Waggregate-return -Wwrite-strings
 CFLAGS += -Wvla -Wfloat-equal
 
+VFLAGS += --leak-check=full --track-origins=yes
+
 SRC_DIR := src
 OBJ_DIR := obj
 DOCS_DIR := docs
@@ -24,6 +26,11 @@ money: $(BIN)
 
 debug: CFLAGS += -g3
 debug: $(BIN)
+	@gdb ./$(BIN)
+
+valgrind: CFLAGS += -g3
+valgrind: clean $(BIN)
+	@valgrind $(VFLAGS) ./$(BIN) data/Pottery.txt
 
 clean: 
 	@rm -rf $(BIN) $(OBJ_DIR)

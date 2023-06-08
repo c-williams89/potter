@@ -14,23 +14,33 @@ typedef struct student {
 	int *stu_time;
 } student;
 
-// void clean();
+void clean(student * stu_list)
+{
+	for (int i = 0; i < stu_list->capacity; ++i) {
+		free(stu_list->stu_name[i]);
+	}
+	free(stu_list->stu_name);
+	free(stu_list->stu_time);
+	free(stu_list);
+}
 
-long get_num_entries(char *file) {
-        long entries = 0;
-        char *curr_line;
-        size_t len = 0;
+long get_num_entries(char *file)
+{
+	long entries = 0;
+	char *curr_line = NULL;
+	size_t len = 0;
 
-        FILE *fp = fopen(file, "r");
-                if (!fp) {
-                        printf("Unable to open file: '%s'\n", file);
-                        exit(1);
-                }
-                while (getline(&curr_line, &len, fp) != -1) {
-                        ++entries;
-                }
-                fclose(fp);
-                return entries;     
+	FILE *fp = fopen(file, "r");
+	if (!fp) {
+		printf("Unable to open file: '%s'\n", file);
+		exit(1);
+	}
+	while (getline(&curr_line, &len, fp) != -1) {
+		++entries;
+	}
+	free(curr_line);
+	fclose(fp);
+	return entries;
 }
 
 student *create_struct()
@@ -60,24 +70,31 @@ student *create_struct()
 void reallocate_stu_list(student * stu_list, int new_size, bool from_user)
 {
 	printf("Reallocating array.\n");
-        
+
 	int next_size = stu_list->capacity * 2;
 	if (from_user) {
-		char **tmp_name = realloc(stu_list->stu_name, next_size * PTR_SIZE);
-		int *tmp_time = realloc(stu_list->stu_time, next_size * PTR_SIZE);
+		char **tmp_name =
+		    realloc(stu_list->stu_name, next_size * PTR_SIZE);
+		int *tmp_time =
+		    realloc(stu_list->stu_time, next_size * PTR_SIZE);
 		if (!tmp_name || !tmp_name) {
-			printf("Error reallocating stu_list array to size %d.\n", next_size);
+			printf
+			    ("Error reallocating stu_list array to size %d.\n",
+			     next_size);
 			exit(1);
 		}
 		stu_list->stu_name = tmp_name;
 		stu_list->stu_time = tmp_time;
 		stu_list->capacity *= 2;
-
 	} else {
-		char **tmp_name = realloc(stu_list->stu_name, new_size * PTR_SIZE);
-		int *tmp_time = realloc(stu_list->stu_time, new_size * PTR_SIZE);
+		char **tmp_name =
+		    realloc(stu_list->stu_name, new_size * PTR_SIZE);
+		int *tmp_time =
+		    realloc(stu_list->stu_time, new_size * PTR_SIZE);
 		if (!tmp_name || !tmp_name) {
-			printf("Error reallocating stu_list array to size %d.\n", new_size);
+			printf
+			    ("Error reallocating stu_list array to size %d.\n",
+			     new_size);
 			exit(1);
 		}
 		stu_list->stu_name = tmp_name;
@@ -103,7 +120,7 @@ void create_student(student * stu_list, char *curr_input)
 	   number of bytes to stu_name.
 	 */
 	int name_size = strcspn(curr_input, delim);
-	stu_list->stu_name[stu_list->size] = malloc(name_size);
+	stu_list->stu_name[stu_list->size] = calloc(name_size + 1, sizeof(char));
 	if (!stu_list->stu_name[stu_list->size]) {
 		printf("Error allocating %d bytes for student name.\n",
 		       name_size);
@@ -115,7 +132,7 @@ void create_student(student * stu_list, char *curr_input)
 student *get_user_input(student * stu_list)
 {
 	while (true) {
-	char user_input[MAX_INPUT_SIZE];
+		char user_input[MAX_INPUT_SIZE];
 		printf
 		    ("Please enter a student and their time to finish the project. Press 'Q' to quit. ==> ");
 		fgets(user_input, 20, stdin);
@@ -126,13 +143,11 @@ student *get_user_input(student * stu_list)
 		if (stu_list->size == stu_list->capacity) {
 			reallocate_stu_list(stu_list, stu_list->size, true);
 		}
-		printf("Did we get here?");
 		create_student(stu_list, user_input);
 		stu_list->size++;
 	}
 	return stu_list;
 }
-
 
 int grade_and_print(student * stu_list, int entries, int i, bool ready_to_print)
 {
@@ -143,21 +158,25 @@ int grade_and_print(student * stu_list, int entries, int i, bool ready_to_print)
 
 	if (i > 0) {
 		for (int j = i, k = 0; j < entries; ++j, ++k) {
-                        if (stu_list->stu_time[j] > k * 5) {
-				(ready_to_print) ? printf("%s\n", stu_list->stu_name[j])
+			if (stu_list->stu_time[j] > k * 5) {
+				(ready_to_print) ? printf("%s\n",
+							  stu_list->stu_name[j])
 				    : ++num_failed;
 			}
 		}
 		for (int j = 0; j < i; ++j) {
-			if (stu_list->stu_time[j] > (stu_list->size - i + j) * 5) {
-				(ready_to_print) ? printf("%s\n", stu_list->stu_name[j])
+			if (stu_list->stu_time[j] >
+			    (stu_list->size - i + j) * 5) {
+				(ready_to_print) ? printf("%s\n",
+							  stu_list->stu_name[j])
 				    : ++num_failed;
 			}
 		}
 	} else {
 		for (int j = 0; j < entries; ++j) {
-                        if (stu_list->stu_time[j] > j * 5) {
-				(ready_to_print) ? printf("%s\n", stu_list->stu_name[j])
+			if (stu_list->stu_time[j] > j * 5) {
+				(ready_to_print) ? printf("%s\n",
+							  stu_list->stu_name[j])
 				    : ++num_failed;
 			}
 		}
@@ -175,20 +194,21 @@ int main(int argc, char *argv[])
 		stu_list = get_user_input(stu_list);
 	} else if (argc == 2) {
 		file = argv[1];
-                long entries = get_num_entries(file);
-                reallocate_stu_list(stu_list, (int) entries, false);
-                FILE *fp = fopen(file, "r");
-                if (!fp) {
-                        printf("Unable to open file: '%s'\n", file);
-                        exit(1);
-                }
-		char *curr_entry;
+		long entries = get_num_entries(file);
+		reallocate_stu_list(stu_list, (int)entries, false);
+		FILE *fp = fopen(file, "r");
+		if (!fp) {
+			printf("Unable to open file: '%s'\n", file);
+			exit(1);
+		}
+		char *curr_entry = NULL;
 		size_t len = 0;
 		for (int i = 0; i < entries; ++i) {
 			getline(&curr_entry, &len, fp);
 			create_student(stu_list, curr_entry);
 			stu_list->size++;
 		}
+		free(curr_entry);
 		fclose(fp);
 	}
 
@@ -207,5 +227,6 @@ int main(int argc, char *argv[])
 	ready_to_print = true;
 	grade_and_print(stu_list, stu_list->size, max_failed_idx,
 			ready_to_print);
+	clean(stu_list);
 
 }
