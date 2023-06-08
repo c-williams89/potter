@@ -9,3 +9,6 @@ src/potter
 
 # ignore scratch
 scratch.c
+
+# ignore adocs
+*.adoc
