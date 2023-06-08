@@ -111,7 +111,7 @@ void create_student(student * stu_list, char *curr_input)
 	char *space_loc = strrchr(curr_input, ' ');
 	space_loc++;
 	int time_to_finsh = strtol(space_loc, &ptr, 10);
-	if (strncmp(space_loc, ptr, strlen(space_loc)) == 0) {
+	if ((strncmp(space_loc, ptr, strlen(space_loc)) == 0) || (ptr)) {
 		printf
 		    ("Invalid format for student information. Please try again.\n");
 		return;
