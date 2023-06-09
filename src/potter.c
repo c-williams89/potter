@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 enum { PTR_SIZE = 8, MAX_INPUT_SIZE = 35 };
 
@@ -55,7 +56,6 @@ student *create_struct()
 	stu_list->stu_name = malloc(stu_list->capacity * PTR_SIZE);
 	if (!stu_list->stu_name) {
 		printf("Error allocating stu_name array of size 1\n");
-		// clean();
 		exit(1);
 	}
 	stu_list->stu_time = calloc(stu_list->capacity, sizeof(int));
@@ -102,13 +102,17 @@ void reallocate_stu_list(student * stu_list, int new_size, bool from_user)
 
 void create_student(student * stu_list, char *curr_input)
 {
-	char delim[] = "1234567890";
+	// char delim[] = "1234567890";
 	/*
 	   Uses a pointer to the space when searching from end of string to isolate
 	   digits for stu_time.
 	 */
 	char *ptr;
 	char *space_loc = strrchr(curr_input, ' ');
+	if (!space_loc) {
+		printf("Invalid format for student information. Please try again.\n");
+		return;
+	}
 	space_loc++;
 	int time_to_finsh = strtol(space_loc, &ptr, 10);
 
@@ -123,9 +127,19 @@ void create_student(student * stu_list, char *curr_input)
 	   Use strcspn to find bytes before digit. Use that value to copy that 
 	   number of bytes to stu_name.
 	 */
-	int name_size = strcspn(curr_input, delim);
+
+	int name_size = strcspn(curr_input, space_loc);
+	int space_to_remove = 0;
+	for (int i = (name_size - 1); i > 0; --i) {
+		if (curr_input[i] == ' ') {
+			space_to_remove++;
+		} else {
+			break;
+		}
+	}
+	curr_input[name_size - space_to_remove] = '\0';
 	stu_list->stu_name[stu_list->size] =
-	    calloc(name_size + 1, sizeof(char));
+	    calloc(name_size + 1, strlen(curr_input + 1));
 	if (!stu_list->stu_name[stu_list->size]) {
 		printf("Error allocating %d bytes for student name.\n",
 		       name_size);
@@ -133,6 +147,7 @@ void create_student(student * stu_list, char *curr_input)
 	}
 	strncpy(stu_list->stu_name[stu_list->size], curr_input, name_size);
 	stu_list->size++;
+	
 }
 
 student *get_user_input(student * stu_list)
@@ -188,6 +203,28 @@ int grade_and_print(student * stu_list, int entries, int i, bool ready_to_print)
 		}
 	}
 	return num_failed;
+
+}
+
+void find_index(student *stu_list, char *person_to_find) {
+	int start_index = 0;
+	bool found_successful = false;
+	for (int i = 0; i < stu_list->size; ++i) {
+		if (strncmp(stu_list->stu_name[i], person_to_find, strlen(stu_list->stu_name[i])) == 0) {
+			start_index = i;
+			found_successful = true;
+		}
+	}
+	if (found_successful) {
+		grade_and_print(stu_list, stu_list->size, start_index, true);
+		clean(stu_list);
+		exit(1);
+		
+	} else {
+		printf("Unable to locate student by name: %s\n", person_to_find);
+		clean(stu_list);
+		exit(1);
+	}
 }
 
 int main(int argc, char *argv[])
@@ -198,7 +235,7 @@ int main(int argc, char *argv[])
 	if (argc == 1) {
 		printf("Names must be entered at the command line.\n\n");
 		stu_list = get_user_input(stu_list);
-	} else if (argc == 2) {
+	} else {
 		file = argv[1];
 		long entries = get_num_entries(file);
 		reallocate_stu_list(stu_list, (int)entries, false);
@@ -215,6 +252,15 @@ int main(int argc, char *argv[])
 		}
 		free(curr_entry);
 		fclose(fp);
+
+		if (argc > 2) {
+			if (((strncmp(argv[2], "-s", 2) == 0) || strncmp(argv[2], "--start", 7) == 0) && argv[3]) {
+				find_index(stu_list, argv[3]);
+			} else {
+				printf("Invalid invocation of program options.\n");
+				exit(1);
+			}
+		}
 	}
 
 	bool ready_to_print = false;
