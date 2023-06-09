@@ -21,16 +21,16 @@ BIN := potter
 
 all: $(BIN)
 
-money: $(BIN)
+grade: $(BIN)
 	./$(BIN)
 
 debug: CFLAGS += -g3
 debug: $(BIN)
-	@gdb ./$(BIN)
+# 	@gdb ./$(BIN)
 
 valgrind: CFLAGS += -g3
 valgrind: clean $(BIN)
-	@valgrind $(VFLAGS) ./$(BIN) data/Pottery.txt
+	@valgrind $(VFLAGS) ./$(BIN)
 
 clean: 
 	@rm -rf $(BIN) $(OBJ_DIR)
