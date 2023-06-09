@@ -15,6 +15,8 @@ The entire project can be pulled from Git.
 
 Developed with C18 and compiled with gcc-9.
 
+---
+
 ### Build
 `potter` can easily be built using the make tool.
 
@@ -23,9 +25,8 @@ To build and compile the program:
 <project_root_dir>$ make
 ```
 to create the executable `potter`.
-<br>
-<br>
 
+---
 
 ### Run
 `potter` can be run with none, or two optional arguments.
@@ -63,6 +64,8 @@ Please enter a student and their time to finish the project using the 'name time
 ```
 Student info must be entered in the following format `<student_name> <time>` and will not exceed 34 characters.
 
+---
+
 ### Debug/Error Checking
 To build `potter` with debug flags:
 ```sh
@@ -79,12 +82,16 @@ To check `potter` against valgrind:
 ```
 to build and launch valgrind.
 
+---
+
 ### Cleanup
 After running the program, execute:
 ```sh
 <project_root_dir>$ make clean
 ```
 to delete object files.
+
+---
 
 ## Support
 Additional support can be found in the man page:
