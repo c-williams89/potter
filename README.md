@@ -38,7 +38,7 @@ generate the list of students to iterate over.
 if the [option] `-s` is provided, followed by a name, the program will only determine
 failing students starting with the provided student. Ex:
 ```sh
-<project_root_dir>$ ./potter -s Herodotus
+<project_root_dir>$ ./potter data/Pottery.txt -s Herodotus
 ```
 Will result in the output
 ```sh
@@ -49,6 +49,10 @@ Carl    Sagan
 Hassan-i Sabbah
 ```
 **NOTE: If the `-s` flag is provided, it must accompany a provided file**
+Names passed via `-s` that are space separated must be wrapped in quotes:
+```sh
+<project_root_dir>$ ./potter data/Pottery.txt -s "Carl Sagan"
+```
 
 Running `potter` without any optional arguments will allow the user to manually enter student info at the command line.
 ```sh
